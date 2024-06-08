@@ -20,10 +20,13 @@ parser.add_argument('--files-to-use', default="train-clean-100.tar.gz,"
                     help='list of file names to download')
 args = parser.parse_args()
 
+# http://openslr.elda.org/resources/12
 LIBRI_SPEECH_URLS = {
-    "train": ["http://www.openslr.org/resources/12/train-clean-100.tar.gz",
+    "train": [
+              "http://www.openslr.org/resources/12/train-clean-100.tar.gz",
               "http://www.openslr.org/resources/12/train-clean-360.tar.gz",
-              "http://www.openslr.org/resources/12/train-other-500.tar.gz"],
+              "http://www.openslr.org/resources/12/train-other-500.tar.gz"
+              ],
 
     "val": ["http://www.openslr.org/resources/12/dev-clean.tar.gz",
             "http://www.openslr.org/resources/12/dev-other.tar.gz"],
@@ -85,13 +88,14 @@ def main():
                 continue
             filename = url.split("/")[-1]
             target_filename = os.path.join(split_dir, filename)
+            print(target_filename)
             if not os.path.exists(target_filename):
                 wget.download(url, split_dir)
             print("Unpacking {}...".format(filename))
             tar = tarfile.open(target_filename)
             tar.extractall(split_dir)
             tar.close()
-            os.remove(target_filename)
+            # os.remove(target_filename)
             print("Converting flac files to wav and extracting transcripts...")
             assert os.path.exists(extracted_dir), "Archive {} was not properly uncompressed.".format(filename)
             for root, subdirs, files in tqdm(os.walk(extracted_dir)):
